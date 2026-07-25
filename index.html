@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>英語ボトルネック診断 ｜ 話せない原因は、5つのうちどれか</title>
+<meta name="description" content="第二言語習得論に基づく無料診断。16問・約90秒で、あなたが英語を話せない原因が「英会話の5ステップ」のどこにあるかを特定します。">
+<meta property="og:title" content="英語が話せない原因は、5つのうちどれか。">
+<meta property="og:description" content="16問90秒。あなたのボトルネックを特定します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   方向性：「診断計器（instrument）」
+   白と近黒とヘアラインで組み、オレンジは “シグナル” のみに使う。
+   ============================================================ */
+:root{
+  --ink:#12161C;         /* 近黒（やや寒色） */
+  --ink-2:#3A424C;
+  --dim:#6B7580;         /* キャプション・データラベル */
+  --paper:#FFFFFF;
+  --mist:#F4F6F8;        /* セクション地色（寒色グレー） */
+  --line:#E2E7EC;        /* ヘアライン */
+  --line-2:#CFD6DE;
+  --signal:#F26522;      /* PROGRIT primary orange＝シグナル */
+  --signal-deep:#C24A12;
+  --signal-tint:#FFF1EA;
+
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Hiragino Sans','Noto Sans JP','Yu Gothic',Meiryo,sans-serif;
+
+  --max:720px;
+  --r:4px;               /* 角丸はほぼ持たせない＝計器的 */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.75;
+  font-size:16px;
+  font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+
+/* ---------- 共通レイアウト ---------- */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+.sec{padding:64px 0;border-top:1px solid var(--line)}
+.sec--mist{background:var(--mist)}
+.sec--flush{border-top:none}
+
+/* ---------- タイポ ---------- */
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.eyebrow::before{content:"";width:18px;height:1px;background:var(--signal);flex:none}
+h1{font-size:clamp(28px,7.4vw,44px);line-height:1.28;font-weight:700;letter-spacing:-.02em}
+h2{font-size:clamp(22px,5.2vw,30px);line-height:1.38;font-weight:700;letter-spacing:-.015em}
+h3{font-size:17px;font-weight:600;line-height:1.5}
+.lead{font-size:16px;color:var(--ink-2);margin-top:18px}
+.note{font-size:12px;line-height:1.7;color:var(--dim);font-family:var(--sans)}
+.num{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.hl{color:var(--signal);font-weight:700}
+.u{
+  background:linear-gradient(transparent 62%,var(--signal-tint) 62%);
+  font-weight:700;
+}
+
+/* ---------- ボタン ---------- */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:19px 24px;background:var(--signal);color:#fff;
+  font-weight:700;font-size:16px;letter-spacing:.01em;border-radius:var(--r);
+  transition:background .18s ease,transform .18s ease;
+  text-decoration:none;text-align:center;
+}
+.btn:hover{background:var(--signal-deep)}
+.btn:active{transform:translateY(1px)}
+.btn--ghost{background:none;color:var(--ink);border:1px solid var(--line-2)}
+.btn--ghost:hover{background:var(--mist)}
+.btn--line{background:#06C755}
+.btn--line:hover{background:#05a948}
+.btn__arrow{font-family:var(--mono);font-weight:600}
+.btn-sub{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);margin-top:12px}
+
+/* ============================================================
+   SIGNATURE：5ステップ・パイプライン
+   ボトルネックで詰まる様子をそのまま可視化する。
+   ============================================================ */
+.pipe{margin:34px 0 8px}
+.pipe__lane{
+  display:flex;align-items:stretch;gap:6px;position:relative;
+}
+.node{
+  flex:1;min-width:0;border:1px solid var(--line-2);background:var(--paper);
+  padding:10px 6px 11px;text-align:center;position:relative;border-radius:var(--r);
+  transition:border-color .3s ease,background .3s ease,box-shadow .3s ease;
+}
+.node__i{
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim);
+  display:block;margin-bottom:5px;
+}
+.node__n{font-size:11.5px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.node__bar{height:3px;background:var(--line);margin-top:8px;border-radius:2px;overflow:hidden}
+.node__bar i{display:block;height:100%;width:0;background:var(--ink-2);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.node.is-jam{border-color:var(--signal);background:var(--signal-tint);box-shadow:0 0 0 3px rgba(242,101,34,.10)}
+.node.is-jam .node__n{color:var(--signal-deep)}
+.node.is-jam .node__i{color:var(--signal)}
+.node.is-jam .node__bar i{background:var(--signal)}
+.node__flag{
+  position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:8.5px;font-weight:600;letter-spacing:.1em;
+  background:var(--signal);color:#fff;padding:2px 7px;border-radius:2px;white-space:nowrap;
+}
+.pipe__labels{display:flex;gap:6px;margin-bottom:9px}
+.pipe__labels span{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);
+  text-transform:uppercase;border-top:1px solid var(--line);padding-top:6px;
+}
+.pipe__base{
+  margin-top:6px;border:1px dashed var(--line-2);border-radius:var(--r);
+  padding:9px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.pipe__base b{font-size:11.5px;font-weight:600}
+.pipe__base span{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.06em}
+.pipe__base.is-jam{border-style:solid;border-color:var(--signal);background:var(--signal-tint)}
+.pipe__base.is-jam b{color:var(--signal-deep)}
+
+/* 走る粒（ヒーローのアイドル演出） */
+.dot{
+  position:absolute;top:-4px;left:0;width:7px;height:7px;border-radius:50%;
+  background:var(--signal);box-shadow:0 0 0 4px rgba(242,101,34,.16);
+}
+@media (prefers-reduced-motion:no-preference){
+  .dot{animation:travel 4.6s cubic-bezier(.3,.05,.6,.2) infinite}
+}
+@keyframes travel{
+  0%{left:2%;opacity:0}
+  10%{opacity:1}
+  46%{left:34%;opacity:1}
+  62%{left:36%}
+  74%{left:35%;opacity:1}
+  86%{left:35%;opacity:.15}
+  100%{left:35%;opacity:0}
+}
+
+/* ---------- ヒーローの便益カード ---------- */
+.benefits{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.benefit{background:var(--paper);padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.benefit__i{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--signal);flex:none;line-height:1.7}
+.benefit b{display:block;font-size:15px;margin-bottom:2px}
+.benefit div{font-size:13.5px;color:var(--ink-2);line-height:1.6}
+
+/* ---------- 信頼バッジ ---------- */
+.proof{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.proof div{background:var(--paper);padding:16px 10px;text-align:center}
+.proof b{display:block;font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.proof span{display:block;font-size:10.5px;color:var(--dim);margin-top:3px;line-height:1.45}
+
+/* ---------- 引用・比喩ブロック ---------- */
+.quote{border-left:2px solid var(--signal);padding:2px 0 2px 18px;margin:26px 0;font-size:17px;font-weight:600;line-height:1.65}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:22px;background:var(--paper)}
+.card+.card{margin-top:12px}
+
+/* ---------- 診断UI ---------- */
+#quiz{display:none;padding-bottom:80px}
+.qbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.qbar__in{max-width:var(--max);margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.qbar__track{flex:1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.qbar__track i{display:block;height:100%;background:var(--signal);width:0;transition:width .35s ease}
+.qbar__c{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.qsec{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--signal);text-transform:uppercase;margin-bottom:14px}
+.qtext{font-size:clamp(19px,4.6vw,23px);font-weight:700;line-height:1.5;letter-spacing:-.015em}
+.qnote{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.65}
+.opts{margin-top:26px;display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;align-items:flex-start;gap:13px;text-align:left;
+  border:1px solid var(--line-2);border-radius:var(--r);padding:16px 17px;
+  background:var(--paper);transition:border-color .14s,background .14s;line-height:1.6;
+}
+.opt:hover{border-color:var(--ink-2);background:var(--mist)}
+.opt__k{
+  font-family:var(--mono);font-size:11px;font-weight:600;color:var(--dim);
+  border:1px solid var(--line-2);border-radius:2px;width:22px;height:22px;flex:none;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.opt.is-on{border-color:var(--signal);background:var(--signal-tint)}
+.opt.is-on .opt__k{background:var(--signal);color:#fff;border-color:var(--signal)}
+.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.qback{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);padding:8px 0}
+.qback:hover{color:var(--ink)}
+
+/* ---------- 結果 ---------- */
+#result{display:none}
+.rtag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--signal);border:1px solid var(--signal);border-radius:2px;padding:5px 10px;text-transform:uppercase}
+.sym{list-style:none;margin-top:6px}
+.sym li{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.6}
+.sym li:first-child{border-top:1px solid var(--line)}
+.sym li::before{content:"✓";font-family:var(--mono);color:var(--signal);font-weight:600;flex:none}
+.wm{margin-top:8px}
+.wm__row{margin-top:16px}
+.wm__cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-bottom:6px;text-transform:uppercase}
+.wm__bar{display:flex;height:26px;border-radius:2px;overflow:hidden;border:1px solid var(--line-2)}
+.wm__bar i{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:var(--mono);color:#fff;white-space:nowrap;overflow:hidden}
+.plan{width:100%;border-collapse:collapse;margin-top:8px;font-size:14.5px}
+.plan th,.plan td{text-align:left;padding:13px 8px;border-bottom:1px solid var(--line)}
+.plan th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;font-weight:500}
+.plan td:last-child,.plan th:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.plan tr.is-key td{color:var(--signal-deep);font-weight:700}
+.plan tfoot td{border-bottom:none;font-family:var(--mono);font-weight:600}
+
+/* 時間比較（270時間） */
+.tc{margin-top:24px}
+.tc__scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.06em;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.tc__row{margin-top:20px}
+.tc__lab{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin-bottom:7px}
+.tc__lab b{font-weight:600}
+.tc__lab span{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+.tc__track{background:var(--mist);border-radius:2px;position:relative}
+.tc__fill{background:var(--signal);border-radius:2px;display:flex;align-items:center;padding-left:10px;color:#fff;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em}
+.tc__fill--thin{background:var(--ink-2)}
+
+/* 費用 */
+.cost{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:20px}
+.cost__r{background:var(--paper);padding:17px 18px;display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+.cost__r b{font-family:var(--mono);font-size:15px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cost__r span{font-size:14px;line-height:1.5}
+.cost__r.is-key{background:var(--signal-tint)}
+.cost__r.is-key b{color:var(--signal-deep)}
+
+.gate{border:1px solid var(--signal);border-radius:var(--r);padding:26px 22px;background:var(--signal-tint)}
+.gate ul{list-style:none;margin:16px 0 22px}
+.gate li{display:flex;gap:11px;padding:7px 0;font-size:14.5px;line-height:1.6}
+.gate li::before{content:"—";font-family:var(--mono);color:var(--signal);flex:none}
+
+details.faq{border-bottom:1px solid var(--line);padding:16px 0}
+details.faq summary{font-weight:600;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:"+";font-family:var(--mono);color:var(--signal);flex:none}
+details.faq[open] summary::after{content:"−"}
+details.faq p{font-size:14px;color:var(--ink-2);margin-top:12px;line-height:1.75}
+
+footer{padding:40px 0 60px;border-top:1px solid var(--line);background:var(--mist)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.mt{margin-top:26px}
+.mt-s{margin-top:14px}
+.mt-l{margin-top:38px}
+.hide{display:none!important}
+
+@media(min-width:640px){
+  .sec{padding:80px 0}
+  .node__n{font-size:12.5px}
+  .btn{width:auto;min-width:320px}
+  .btn-wrap{display:flex;flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ▼▼▼ 公開前に必ず設定してください ▼▼▼
+     ============================================================ -->
+<script>
+const CONFIG = {
+  // LINE公式アカウントの友だち追加URL（例: https://lin.ee/xxxxxxx）
+  LINE_URL: "#SET_LINE_URL",
+  // 無料カウンセリング予約URL
+  COUNSELING_URL: "#SET_COUNSELING_URL",
+  // ウェビナー申込URL（情報収集層の受け皿。未使用ならnullでボタン非表示）
+  WEBINAR_URL: null,
+  // 回答データの送信先（任意）。null なら送信しない。
+  WEBHOOK_URL: null,
+  // 実績数値（※eBookは25,000人／公式サイトは12,000名。最新の正しい数字に統一してください）
+  CUSTOMERS: "25,000",
+
+  /* 料金：ビジネス英会話コース（税込・入会金55,000円を含む）
+     出典＝公式サイト 受講料ページ。改定時はここだけ直せば全文に反映されます。 */
+  PRICE_TOTAL:   632500,   // 3ヶ月（12週間）プラン ＝ 270時間の基準プラン
+  PRICE_MONTHLY:  19400,   // 上記を36回分割した場合の月々（初回 22,746円）
+  PRICE_FIRST:    22746,   // 36回分割の初回支払額
+  PRICE_ENTRY:   457600,   // 2ヶ月プラン（入口プラン）
+  PRICE_ENTRY_M:  13900    // 2ヶ月プランを36回分割した場合の月々
+};
+</script>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section id="hero" class="sec sec--flush" style="padding-top:44px">
+  <div class="wrap">
+    <p class="eyebrow">90秒・無料の英語ボトルネック診断</p>
+    <h1>なぜ、こんなに<br>勉強してるのに<br>話せないんだろう。</h1>
+    <p class="lead">
+      その原因、根性でも才能でもありません。<span class="u">たった1か所の「詰まり」</span>のせいです。<br>
+      16問の質問に答えるだけで、あなたがどこで詰まっているかが分かります。
+    </p>
+
+    <div class="benefits mt-l">
+      <div class="benefit"><span class="benefit__i">①</span><div><b>つまずいている場所が分かる</b>あなたの英語が伸びない、たった1つの原因を特定します。</div></div>
+      <div class="benefit"><span class="benefit__i">②</span><div><b>やるべきことがハッキリする</b>その原因に効くトレーニングだけを、優先順位つきで。</div></div>
+      <div class="benefit"><span class="benefit__i">③</span><div><b>ムダな学習をやめられる</b>効かない勉強に時間を使うのを、今日で終わりにできます。</div></div>
+    </div>
+
+    <div class="btn-wrap mt-l">
+      <button class="btn" onclick="startQuiz()">診断をはじめる<span class="btn__arrow">→</span></button>
+      <p class="btn-sub">無料 ／ 登録なしで結果が見られます ／ 約90秒</p>
+    </div>
+
+    <div class="proof mt-l">
+      <div><b id="pfCustomers">25,000</b><span>累計受講者数<br>（※要確認）</span></div>
+      <div><b>+123<span style="font-size:11px">点</span></b><span>TOEIC®平均<br>スコアUP（※1）</span></div>
+      <div><b>3<span style="font-size:11px">ヶ月</span></b><span>で成果を<br>出す設計</span></div>
+    </div>
+    <p class="note mt-s">※1 2019年9月〜2021年6月にTOEIC®L&amp;R Testコースを卒業した受講生データより集計。結果には個人差があり、効果を保証するものではありません。カリキュラム監修：上智大学 吉田研作教授。</p>
+  </div>
+</section>
+
+<!-- 5ステップの説明：診断の直前に置く。ここで初めて専門的な話を出す -->
+<section class="sec sec--mist">
+  <div class="wrap">
+    <p class="eyebrow">この診断でわかること</p>
+    <h2>英語を話すとき、<br>脳は5つの処理をしています。</h2>
+    <p class="lead">
+      聞いて、意味をとって、言いたいことを考えて、英文を組み立てて、声に出す。この一連の流れの<b>どこか1か所が詰まる</b>だけで、英会話は止まってしまいます。
+    </p>
+
+    <div class="pipe">
+      <div class="pipe__labels">
+        <span style="flex:2">聞く（Listening）</span>
+        <span style="flex:3">話す（Speaking）</span>
+      </div>
+      <div class="pipe__lane" id="heroLane">
+        <div class="dot" aria-hidden="true"></div>
+      </div>
+      <div class="pipe__base"><b>知識の土台</b><span>単語・文法・例文</span></div>
+    </div>
+    <p class="note mt-s">
+      多くの人は、詰まっている場所とは違うところを一生懸命に鍛えています。だから伸びません。<br>
+      まず、あなたの詰まりがどこにあるかを見つけましょう。
+    </p>
+
+    <div class="btn-wrap mt-l">
+      <button class="btn" onclick="startQuiz()">自分の詰まりを診断する<span class="btn__arrow">→</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     診断
+     ============================================================ -->
+<div id="quiz">
+  <div class="qbar">
+    <div class="qbar__in">
+      <span class="qbar__c" id="qCount">01 / 16</span>
+      <div class="qbar__track"><i id="qFill"></i></div>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:38px">
+    <p class="qsec" id="qSec"></p>
+    <p class="qtext" id="qText"></p>
+    <p class="qnote hide" id="qNote"></p>
+    <div class="opts" id="qOpts"></div>
+    <div class="qnav">
+      <button class="qback" id="qBack" onclick="back()">← 前の質問</button>
+      <button class="btn hide" id="qNext" style="width:auto;min-width:180px;padding:14px 22px" onclick="next()">次へ<span class="btn__arrow">→</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     結果
+     ============================================================ -->
+<div id="result">
+
+  <!-- 1. 宣告：ここが唯一の「報酬」 -->
+  <section class="sec sec--flush" style="padding-top:40px">
+    <div class="wrap">
+      <span class="rtag">診断結果</span>
+      <h1 class="mt" id="rName" style="font-size:clamp(24px,6.2vw,36px)"></h1>
+      <p class="lead" id="rSummary"></p>
+
+      <div class="pipe mt-l">
+        <div class="pipe__labels"><span style="flex:2">聞く（Listening）</span><span style="flex:3">話す（Speaking）</span></div>
+        <div class="pipe__lane" id="rLane"></div>
+        <div class="pipe__base" id="rBase"><b>知識の土台</b><span>単語・文法・例文</span></div>
+      </div>
+      <p class="note mt-s" id="rGapNote"></p>
+    </div>
+  </section>
+
+  <!-- 2. 症状の言い当て：信頼を作る唯一のパート -->
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">あなたに起きていること</p>
+      <h2>心当たり、ありませんか。</h2>
+      <ul class="sym mt" id="rSym"></ul>
+      <p class="lead">これらはバラバラの弱点ではありません。<b>すべて同じ1つの原因から出ている症状</b>です。</p>
+    </div>
+  </section>
+
+  <!-- 3. やるべきことの「予告」だけ -->
+  <section class="sec sec--mist">
+    <div class="wrap">
+      <p class="eyebrow">最初にやるべきこと</p>
+      <h2 id="rTrainTitle"></h2>
+      <p class="lead">
+        やるべきトレーニングは特定できました。ただし、<b>「どの教材で、1日何分やるか」までは診断では出せません。</b>
+        同じトレーニングでも、教材のレベルと時間配分を外すと結果は変わります。
+      </p>
+      <p class="lead" style="margin-top:14px">あなたの課題に合わせた配分と手順は、詳細レポートにまとめています。</p>
+    </div>
+  </section>
+
+  <!-- 4. LINEゲート＝主CTA -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="gate">
+        <p class="eyebrow" style="color:var(--signal-deep)">詳細レポート（PDF）</p>
+        <h2 style="font-size:clamp(20px,5vw,26px)">続きを、LINEで受け取る</h2>
+        <p class="lead hide" id="rInvLine" style="font-size:15px"></p>
+        <ul id="rGateList"></ul>
+        <a class="btn btn--line" id="ctaLine" href="#">LINEでレポートを受け取る</a>
+        <p class="btn-sub">友だち追加後すぐに届きます ／ 無料</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 二次CTA：今すぐ動きたい人だけ -->
+  <section class="sec sec--mist">
+    <div class="wrap">
+      <p class="eyebrow">今すぐ相談したい方へ</p>
+      <h2>原因を、実測で確定させる。</h2>
+      <p class="lead">
+        この診断は自己申告にもとづく推定です。60分の無料カウンセリングでは実際の英語力診断テストを行い、結果を確定させたうえで、目標までのカリキュラムを作成します。
+      </p>
+      <div class="btn-wrap mt-l stack">
+        <a class="btn btn--ghost" id="ctaCons" href="#">無料カウンセリングを予約する</a>
+        <a class="btn btn--ghost hide" id="ctaWeb" href="#">まずはウェビナーで学習法を知る</a>
+      </div>
+      <p class="btn-sub">60分・オンライン可・無料</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="eyebrow">よくある質問</p>
+      <details class="faq"><summary>この診断はどのくらい正確ですか？</summary><p>「英会話の5ステップ」のどこで詰まっているかを、行動の症状から推定するものです。傾向の特定には有効ですが、レベル判定や教材選定には実測が必要です。無料カウンセリングでは英語力診断テストを行い、この結果を確定させます。</p></details>
+      <details class="faq"><summary>オンライン英会話は、やめたほうがいいですか？</summary><p>いいえ。オンライン英会話は「試合」です。必要ですが、試合だけではシュートは上手くなりません。シャドーイングや口頭英作文といった「練習」を土台にしたうえで、実戦の場として使うのが最も効果的です。</p></details>
+      <details class="faq"><summary>途中で合わなかった場合は？</summary><p>コンサルタントの変更、30日間の全額返金保証、30日以降の日割返金の各制度があります（条件・上限があります。詳細はカウンセリングでご確認ください）。</p></details>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="note">
+      本診断は第二言語習得論の枠組み（英会話の5ステップ）に基づく簡易的な自己診断です。結果には個人差があり、学習成果を保証するものではありません。掲載の実績数値は各集計期間の受講生データに基づくものです。<br><br>
+      料金・保証制度の詳細および最新の情報は、無料カウンセリングまたは公式サイトにてご確認ください。
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   質問データ
+   scores: サブスコア（0-100）  pen: 減点  meta: 分岐用
+   キー K=知識DB P=音声知覚 U=意味理解 C=概念化 F=文章化 V=音声化 T=投下時間
+   ============================================================ */
+const Q = [
+{ sec:"あなたのゴール", text:"英語が必要になる場面は？", note:"いちばんリアルなものを1つ。",
+  o:[{l:"会議・商談で発言する",m:{goal:"meeting"}},
+     {l:"海外赴任・外国人の上司",m:{goal:"global"}},
+     {l:"転職・キャリアの選択肢",m:{goal:"career"}},
+     {l:"旅行・趣味・自己成長",m:{goal:"self"}}]},
+
+/* 唯一の客観指標。他の自己申告設問のアンカーになるため、序盤に置く。
+   「受けたことがない」はスコアを持たせない（推測させると精度が落ちる） */
+{ sec:"あなたのゴール", text:"TOEICのスコアは？", note:"直近のもので、おおよそで。",
+  o:[{l:"〜400点",        s:{K:15,U:20},m:{toeic:"400"}},
+     {l:"400〜600点",     s:{K:40,U:40},m:{toeic:"600"}},
+     {l:"600〜800点",     s:{K:70,U:60},m:{toeic:"800"}},
+     {l:"800点以上",      s:{K:90,U:75},m:{toeic:"over"}},
+     {l:"受けたことがない",                m:{toeic:null}}]},
+
+{ sec:"知識の土台", text:"英語にしようとして、使う表現が浮かばないことは？",
+  o:[{l:"ほぼ毎回",s:{K:15}},
+     {l:"よくある",s:{K:45}},
+     {l:"ときどき",s:{K:75}},
+     {l:"ほとんどない",s:{K:95},m:{cBonus:10}}]},
+
+{ sec:"リスニング", text:"聞き取れなかった英語を、あとで字幕で見ると？",
+  note:"いちばん近いものを1つ。ここが診断の分岐点です。",
+  o:[{l:"知っている単語だった",s:{P:10,U:80,K:80}},
+     {l:"知らない単語が多い",s:{P:50,U:40,K:15}},
+     {l:"単語は分かるが、意味を取るのが遅い",s:{P:60,U:20,K:60}},
+     {l:"字幕で確認したことがない",s:{P:35,U:35,K:40},m:{noScript:true}}]},
+
+{ sec:"リスニング", text:"音が繋がって、別の言葉に聞こえることは？",
+  o:[{l:"ほぼ毎回",s:{P:10}},
+     {l:"よくある",s:{P:35}},
+     {l:"ときどき",s:{P:65}},
+     {l:"ほとんどない",s:{P:90}}]},
+
+{ sec:"リスニング", text:"1分以上まとまった英語を聞くと？",
+  o:[{l:"最初の数秒で置いていかれる",s:{P:15,U:20}},
+     {l:"途中で追えなくなる",s:{P:40,U:25}},
+     {l:"追えるが、終わると疲れる",s:{P:55,U:55}},
+     {l:"余裕をもって聞ける",s:{P:90,U:90}}]},
+
+{ sec:"リスニング", text:"英文を読むとき、前に戻って読み直しますか？",
+  o:[{l:"ほぼ毎文で戻る",s:{U:10}},
+     {l:"複雑な文では戻る",s:{U:40}},
+     {l:"ときどき戻る",s:{U:70}},
+     {l:"戻らない",s:{U:95}}]},
+
+{ sec:"スピーキング", text:"時間をかけて紙に書くなら、英文にできますか？",
+  note:"いちばん近いものを1つ。ここも分岐点です。",
+  o:[{l:"書ける。でも口では出ない",s:{F:15,K:80,C:80}},
+     {l:"書いても語順・文法が崩れる",s:{F:30,K:20,C:60}},
+     {l:"日本語でも、中身がまとまらない",s:{F:55,K:65,C:15}},
+     {l:"話すのも書くのも、できる",s:{F:85,K:85,C:85}}]},
+
+/* 併存が普通なので複数選択。文章化スコアは「最も重い症状」を採用する（agg:'min'） */
+{ sec:"スピーキング", text:"話すとき、どこでつまずきますか？", note:"当てはまるものすべて。", multi:true, agg:"min",
+  o:[{l:"単語が出てこない",s:{F:45},p:{K:12},m:{stumble:"word"}},
+     {l:"語順・時制が崩れる",s:{F:20},m:{stumble:"order"}},
+     {l:"沈黙が長くなる",s:{F:70},p:{C:15},m:{stumble:"silence"}},
+     {l:"発音で聞き返される",s:{F:80},p:{V:15},m:{stumble:"pron"}}]},
+
+{ sec:"スピーキング", text:"日本語の会議で、その場で意見を言うのは？",
+  o:[{l:"苦手",s:{C:20}},
+     {l:"時間はかかるが言える",s:{C:45}},
+     {l:"だいたい言える",s:{C:75}},
+     {l:"得意",s:{C:95}}]},
+
+{ sec:"スピーキング", text:"発音が原因で聞き返されることは？",
+  o:[{l:"よくある",s:{V:20}},
+     {l:"ときどき",s:{V:50}},
+     {l:"ほとんどない",s:{V:80}},
+     {l:"褒められることもある",s:{V:95}}]},
+
+{ sec:"学習の実行", text:"この1ヶ月、1日平均の学習時間は？",
+  o:[{l:"ほぼ0分",s:{T:5}},
+     {l:"15〜30分",s:{T:25}},
+     {l:"1時間前後",s:{T:50}},
+     {l:"2時間以上",s:{T:85}}]},
+
+{ sec:"学習の実行", text:"学習が続かなくなった理由は？", note:"当てはまるものすべて。", multi:true,
+  o:[{l:"時間が取れない",m:{block:"time"}},
+     {l:"伸びているか不安になる",m:{block:"doubt"}},
+     {l:"一人だとサボる",m:{block:"alone"}},
+     {l:"何をやるか分からない",m:{block:"what"}}]},
+
+{ sec:"学習の実行", text:"これまで取り組んだ学習法は？", note:"当てはまるものすべて。", multi:true,
+  o:[{l:"オンライン英会話",m:{mt:"online"}},
+     {l:"単語アプリ",m:{mt:"vocab"}},
+     {l:"英会話スクール",m:{mt:"school"}},
+     {l:"参考書・独学",m:{mt:"self"}},
+     {l:"TOEIC対策",m:{mt:"toeic"}},
+     {l:"ほとんど未経験",m:{mt:"none"}}]},
+
+{ sec:"投資の状況", text:"英語学習を始めて、どのくらい経ちますか？",
+  o:[{l:"1年未満",m:{years:0.5}},
+     {l:"1〜3年",m:{years:2}},
+     {l:"3〜7年",m:{years:5}},
+     {l:"7年以上",m:{years:10}}]},
+
+{ sec:"投資の状況", text:"英語にかけている費用は、月あたりどのくらい？",
+  note:"教材・アプリ・スクールを含めた概算で。",
+  o:[{l:"ほぼ0円",m:{fee:0}},
+     {l:"3,000円未満",m:{fee:2000}},
+     {l:"3,000〜10,000円",m:{fee:6500}},
+     {l:"10,000〜30,000円",m:{fee:18000}},
+     {l:"30,000円以上",m:{fee:40000}}]}
+];
+
+/* ============================================================
+   5ステップ定義
+   ============================================================ */
+const STEPS = [
+  {i:"STEP 01", n:"音声知覚", key:"P"},
+  {i:"STEP 02", n:"意味理解", key:"U"},
+  {i:"STEP 03", n:"概念化",   key:"C"},
+  {i:"STEP 04", n:"文章化",   key:"F"},
+  {i:"STEP 05", n:"音声化",   key:"V"}
+];
+
+/* ============================================================
+   結果タイプ
+   ページに表示するのは name / sum / sym / trainT / plan[0][0] のみ。
+   mech・wm・train・plan の全量は「LINEで送るPDFレポートの原稿」として
+   ここに保持している（単一の情報源にするため）。
+   ※ページのソースを見れば読めてしまう点は許容。隠したい場合はサーバ側へ移すこと。
+   ============================================================ */
+const T = {
+K:{ name:"「素材づくり」フェーズ型", step:-1,
+  sum:"あなたのボトルネックは、5ステップより手前の<b>知識データベース</b>にあります。伸びしろが最も大きい段階です。ここを埋めると、他のすべてのステップが一気に動き出します。",
+  sym:["英語を聞いても読んでも、知らない単語や表現が多い","言いたいことを英語にしようとすると、使う単語自体が浮かばない","スクリプトを見ても、意味が取れないことがある"],
+  mechT:"素材がなければ、料理はできません。",
+  mech:"音声知覚も文章化も、「知っている単語・文法・例文」の在庫の上で動く処理です。在庫が薄いまま聞く練習や話す練習を重ねても、処理する対象がないので自動化は起きません。まず在庫を増やす。順番はこれ以外にありません。",
+  wm:{a:{lab:"現状",rows:[["在庫",30],["処理",70]]},b:{lab:"必要な状態",rows:[["在庫",70],["処理",30]]}},
+  wmNote:"※学習リソースの配分イメージです。",
+  trainT:"単語と例文の在庫を、集中的に増やす。",
+  train:"この段階でオンライン英会話や複雑な教材に進んでも、処理する素材がありません。単語を「音」と「例文」に紐付けて覚えることが、最短距離です。",
+  plan:[["単語（音・例文とセット）",80,1],["シャドーイング",40,0],["多読",30,0],["口頭英作文",30,0]]},
+
+P:{ name:"「読めるのに、聞けない」型", step:0,
+  sum:"あなたのボトルネックは <b>STEP1 音声知覚</b> です。知識の土台はあります。<b>音を単語として認識する処理が、まだ自動化されていない</b>だけです。",
+  sym:["字幕やスクリプトを見れば分かるのに、音だけだと分からない","音が繋がったり消えたりすると、別の言葉に聞こえる","聞き取ることに必死で、内容が頭に入ってこない"],
+  mechT:"聞き取りに、脳の容量を使い切っています。",
+  mech:"日本語を聞くとき、音を聞き取ることは無意識にできています。だから意味や文脈の理解に集中できます。英語でこれが起きていないと、脳の作業領域のほとんどを「音を聞き取ること」に奪われ、意味理解に回す余裕がなくなります。必要なのは耳の良さではなく、音声知覚の自動化です。",
+  wm:{a:{lab:"リスニングが苦手な状態",rows:[["音声知覚",95],["意味理解",5]]},b:{lab:"理想の状態",rows:[["音声知覚",5],["意味理解",95]]}},
+  wmNote:"※リスニング中の脳内ワーキングメモリの配分。",
+  trainT:"シャドーイングで、音声知覚を自動化する。",
+  train:"音声を聞きながら、少し遅れて真似して発音するトレーニングです。30秒〜1分の教材を100〜150回繰り返し、最後に必ず録音して聴き返します。録音でしか自分の弱点は見えません。",
+  plan:[["シャドーイング（録音つき）",70,1],["単語",50,0],["多読",30,0],["口頭英作文",30,0]]},
+
+U:{ name:"「一語ずつ追ってしまう」型", step:1,
+  sum:"あなたのボトルネックは <b>STEP2 意味理解</b> です。音も単語も分かります。<b>意味を処理する速度</b>が、英語の流れに追いついていません。",
+  sym:["単語は聞き取れているのに、意味の処理が追いつかない","英文を読むとき、後ろから前に戻って読み直してしまう","前半は分かるが、途中で処理が追いつかなくなる"],
+  mechT:"戻って読む癖が、速度の上限を作っています。",
+  mech:"リスニングは巻き戻せません。返り読みの癖があると、音声では処理が破綻します。意味理解は、文字でも音声でも同じプロセスです。だから読解の速度と処理の順序を変えることが、そのままリスニング力に効きます。",
+  wm:{a:{lab:"現状",rows:[["逐語処理",80],["チャンク処理",20]]},b:{lab:"理想の状態",rows:[["逐語処理",20],["チャンク処理",80]]}},
+  wmNote:"※チャンク＝意味のかたまり単位での処理。",
+  trainT:"多読で、前から処理する速度をつくる。",
+  train:"英語を大量に読み込みます。ルールは3つ。返り読みをしない。意味のかたまりごとに処理する。分からない単語は推測して読み続ける。レベルに合った教材選びが成否を分けます。",
+  plan:[["多読",70,1],["シャドーイング",40,0],["単語",40,0],["口頭英作文",30,0]]},
+
+C:{ name:"「英語より、中身が先」型", step:2,
+  sum:"あなたのボトルネックは <b>STEP3 概念化</b> です。これは英語力の問題ではありません。<b>何を言うかを構造化するプロセス</b>に課題があります。",
+  sym:["何を言うか考えている時間が長く、沈黙してしまう","日本語の会議でも、その場で意見を組み立てるのに時間がかかる","話し始めてから、話の着地点が分からなくなる"],
+  mechT:"英語の前に、伝える中身の設計です。",
+  mech:"「三日坊主」を “three-day monk” と直訳しても伝わりません。「物事が続かない人」と組み替える——これが概念化です。英語を話せる人は、脳のリソースをこの概念化に使えています。ここが弱いままだと、語彙や文法を増やしても沈黙は解消しません。",
+  wm:{a:{lab:"現状",rows:[["概念化",60],["文章化",30],["音声化",10]]},b:{lab:"理想の状態",rows:[["概念化",25],["文章化",60],["音声化",15]]}},
+  wmNote:"※スピーキング中のリソース配分。概念化の負荷そのものを下げていきます。",
+  trainT:"言い換えの型を身につけ、口頭英作文で回す。",
+  train:"日本語で要点を3つに整理する訓練と、口頭英作文を組み合わせます。難しい日本語を、簡単な日本語に置き換える練習が、そのまま英語の流暢さになります。",
+  plan:[["口頭英作文",50,1],["日本語での要約・意見構築",30,1],["多読",60,0],["単語",40,0]]},
+
+F:{ name:"「知識が眠っている」型", step:3,
+  sum:"あなたのボトルネックは <b>STEP4 文章化</b> です。知識も、言いたい中身もあります。<b>それを瞬時に英文に組み立てる回路</b>が、まだ繋がっていないだけです。",
+  sym:["時間をかければ書けるのに、口からは出てこない","言いたいことは日本語で浮かんでいるのに、英語にならない","語順や時制が崩れて、途中で言い直してしまう"],
+  mechT:"脳の容量を、文の組み立てに使い切っています。",
+  mech:"英語が話せない人は、脳のキャパシティを「文章化」に使ってしまいます。その結果、言いたいことはあるのに英語が出てきません。話せる人は文法や単語の選択を瞬時に処理できるので、伝える内容の構成にリソースを割けます。必要なのは、文章化に割くリソースを減らすことです。",
+  wm:{a:{lab:"英語が話せない状態",rows:[["概念化",20],["文章化",65],["音声化",15]]},b:{lab:"英語が話せる状態",rows:[["概念化",60],["文章化",25],["音声化",15]]}},
+  wmNote:"※スピーキング中の脳内ワーキングメモリの配分。",
+  trainT:"口頭英作文で、文章化を自動化する。",
+  train:"日本語の文を、瞬間的に英文にして声に出すトレーニングです。逐語訳ではなく、意味を理解してから英語で組み立てる。この回路ができると、はじめて「スラスラ話せる」状態になります。",
+  plan:[["口頭英作文",80,1],["単語",40,0],["シャドーイング",30,0],["多読",30,0]]},
+
+V:{ name:"「あと一歩、伝わり切らない」型", step:4,
+  sum:"あなたのボトルネックは <b>STEP5 音声化</b> です。ここまで来ている人は多くありません。<b>あと一歩</b>の段階です。",
+  sym:["言いたいことは言い切れるが、発音のせいで聞き返される","書けば伝わるのに、話すと通じないことがある","自分の英語を録音して聴いたことがない"],
+  mechT:"優先度は高くない。だからこそ、確実に埋められます。",
+  mech:"スピーキングの目的は正しく伝えることであり、発音そのものではありません。だから音声化の優先度は概念化や文章化より低い——という前提の上で、あなたはすでにその土台を持っています。残っているのは、通じる音を作る仕上げの作業です。",
+  wm:{a:{lab:"現状",rows:[["概念化",45],["文章化",25],["音声化",30]]},b:{lab:"理想の状態",rows:[["概念化",55],["文章化",30],["音声化",15]]}},
+  wmNote:"※音声化の負荷を下げ、内容に集中できる状態へ。",
+  trainT:"録音を軸にしたシャドーイングで仕上げる。",
+  train:"シャドーイングを録音し、原音との差を毎日チェックします。自分の耳だけでは、ずれている箇所は見つかりません。第三者のフィードバックがあると、ここは短期間で変わります。",
+  plan:[["シャドーイング（録音重点）",60,1],["口頭英作文",60,0],["多読",30,0],["単語",30,0]]},
+
+X:{ name:"「仕上げ」フェーズ型", step:-2,
+  sum:"5ステップに大きな詰まりは見当たりません。ここから先の伸びは、<b>より高い負荷の教材と、精密なレベル調整</b>で決まります。自己流では最も停滞しやすい段階です。",
+  sym:["日常会話は問題ないが、議論や交渉になると崩れる","伸びている実感が持てず、次に何をやるべきか分からない","自分に合うレベルの教材が見つからない"],
+  mechT:"停滞の原因は、負荷の設計です。",
+  mech:"この段階では「何をやるか」より「どのレベルでやるか」が成果を決めます。簡単すぎる教材はいくら量をこなしても自動化を進めません。難しすぎる教材は処理が破綻します。適正負荷の見極めが、ここから先の唯一のレバーです。",
+  wm:{a:{lab:"現状",rows:[["適正負荷",40],["過小・過大負荷",60]]},b:{lab:"理想の状態",rows:[["適正負荷",85],["過小・過大負荷",15]]}},
+  wmNote:"※教材レベルの適合度のイメージです。",
+  trainT:"負荷を上げ、実戦の比率を増やす。",
+  train:"全トレーニングの教材レベルを一段上げ、そのうえで実戦（英会話）の比率を高めます。レベル調整の精度がそのまま伸びに直結する段階です。",
+  plan:[["英会話（実戦）",45,1],["口頭英作文",45,0],["シャドーイング",45,0],["多読",45,0]]}
+};
+
+/* なぜ今までの学習が効かなかったか */
+const WHY = {
+ online:{t:"オンライン英会話",
+   P:"相手はあなたに配慮して、ゆっくり平易に話します。音の変化に慣れる負荷が、そもそもかかっていません。",
+   U:"会話は短いやりとりの連続なので、まとまった英語を前から処理し続ける負荷がかかりません。",
+   F:"週2回25分では、瞬時に文を組む反復回数が絶対的に足りません。しかも知っている表現だけで会話を回避できてしまいます。",
+   K:"話す機会より先に、材料の在庫を増やす段階です。素材がないまま試合をしても、消耗するだけです。",
+   C:"沈黙を相手が埋めてくれるため、自分で構造を組む訓練になりません。",
+   V:"通じてしまうと修正されません。ずれを指摘してくれる仕組みが必要です。",
+   X:"レベルに合った講師と話題が固定できていないと、負荷が上がらず停滞します。"},
+ vocab:{t:"単語アプリ",
+   P:"単語を「文字」で覚えても、「音」の辞書は増えません。音とセットで覚える必要があります。",
+   U:"単語を知っていても、かたまりで処理する訓練は別に必要です。",
+   F:"知識は増えても、それを瞬時に取り出す回路は別のトレーニングでしか作れません。",
+   K:"方向は正しいです。足りないのは「音」と「例文」への紐付けです。",
+   C:"語彙はあなたの課題ではありません。",
+   V:"単語単体の発音と、文の中での発音は別物です。",
+   X:"低頻度語を追うより、既知語を使い切る訓練のほうが効きます。"},
+ school:{t:"英会話スクール",
+   P:"レッスン内で音声知覚のトレーニングに割かれる時間は、ごく僅かです。",
+   U:"週1〜2回の会話量では、処理速度は上がりません。",
+   F:"レッスン時間の大半は相手の発言と待ち時間です。自分が文を組む回数が足りません。",
+   K:"在庫を増やす作業は、レッスン外の自習でしか進みません。",
+   C:"決まったトピックでのやりとりが多く、ゼロから構造を組む機会が限られます。",
+   V:"発音矯正に特化していない限り、体系的には直りません。",
+   X:"到達目標と負荷設計がないと、快適なだけの時間になります。"},
+ self:{t:"参考書・独学",
+   P:"読む学習が中心だと、音声の処理は鍛えられません。",
+   U:"精読の癖は、返り読みを強化してしまう場合があります。",
+   F:"書く練習と、口から出す練習は別のスキルです。",
+   K:"知識は積み上がります。次は音と例文への接続です。",
+   C:"文法の正しさより、内容の組み立てが課題です。",
+   V:"独学で発音のずれを自覚するのは、ほぼ不可能です。",
+   X:"独学の限界は、自分の弱点が見えないことです。"},
+ toeic:{t:"TOEIC対策",
+   P:"設問形式に慣れただけで、音声知覚が自動化されたわけではありません。",
+   U:"設問を解く読み方は、通読の速度とは別のスキルです。",
+   F:"選択肢から選ぶ力と、ゼロから組み立てる力は別物です。",
+   K:"語彙は伸びます。ただし使用場面と紐付いていません。",
+   C:"スコアは伸びても、伝える中身の設計力は測られていません。",
+   V:"スピーキングは測定範囲外です。",
+   X:"スコアと実務での運用力は、この段階から乖離します。"}
+};
+
+/* ============================================================
+   状態とロジック
+   ============================================================ */
+let idx=0, ans={}, sel=[];
+
+function el(id){return document.getElementById(id)}
+
+/* ---- パイプライン描画 ---- */
+function drawLane(laneId, jamStep, fills){
+  const lane=el(laneId); if(!lane) return;
+  const dot=lane.querySelector('.dot');
+  lane.innerHTML='';
+  if(dot) lane.appendChild(dot);
+  STEPS.forEach((s,i)=>{
+    const jam = i===jamStep;
+    const d=document.createElement('div');
+    d.className='node'+(jam?' is-jam':'');
+    d.innerHTML=(jam?'<span class="node__flag">bottleneck</span>':'')+
+      '<span class="node__i">'+s.i+'</span><span class="node__n">'+s.n+'</span>'+
+      '<span class="node__bar"><i></i></span>';
+    lane.appendChild(d);
+    if(fills){
+      const w=Math.max(6,Math.min(100,fills[s.key]||0));
+      requestAnimationFrame(()=>{setTimeout(()=>{d.querySelector('.node__bar i').style.width=w+'%'},120+i*90)});
+    }
+  });
+}
+drawLane('heroLane',1,null);
+el('pfCustomers').textContent=CONFIG.CUSTOMERS;
+
+/* ---- 診断開始 ---- */
+function startQuiz(){
+  el('hero').style.display='none';
+  document.querySelectorAll('.sec').forEach(s=>{if(!s.closest('#result')&&s.id!=='hero')s.style.display='none'});
+  el('quiz').style.display='block';
+  idx=0; ans={}; render(); window.scrollTo(0,0);
+}
+
+function render(){
+  const q=Q[idx]; sel=[];
+  el('qSec').textContent=q.sec;
+  el('qText').textContent=q.text;
+  const n=el('qNote');
+  if(q.note){n.textContent=q.note;n.classList.remove('hide')}else{n.classList.add('hide')}
+  el('qCount').textContent=String(idx+1).padStart(2,'0')+' / '+String(Q.length).padStart(2,'0');
+  el('qFill').style.width=((idx)/Q.length*100)+'%';
+  el('qBack').style.visibility = idx===0?'hidden':'visible';
+  el('qNext').classList.toggle('hide',!q.multi);
+
+  const box=el('qOpts'); box.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.type='button';
+    b.innerHTML='<span class="opt__k">'+String.fromCharCode(65+i)+'</span><span>'+o.l+'</span>';
+    b.onclick=()=>{
+      if(q.multi){
+        const p=sel.indexOf(i);
+        if(p>-1){sel.splice(p,1);b.classList.remove('is-on')}
+        else{sel.push(i);b.classList.add('is-on')}
+      }else{
+        ans[idx]=[i]; advance();
+      }
+    };
+    box.appendChild(b);
+  });
+}
+function next(){ if(!sel.length)return; ans[idx]=sel.slice(); advance(); }
+function back(){ if(idx>0){idx--;render();window.scrollTo(0,0)} }
+function advance(){
+  if(idx<Q.length-1){ idx++; render(); window.scrollTo(0,0); }
+  else { el('qFill').style.width='100%'; setTimeout(finish,180); }
+}
+
+/* ---- 採点 ---- */
+/* ============================================================
+   採点
+   ============================================================ */
+function score(){
+  const acc={K:[],P:[],U:[],C:[],F:[],V:[],T:[]}, pen={};
+  const meta={mt:[],block:[],stumble:[]};
+  Q.forEach((q,qi)=>{
+    const picks=(ans[qi]||[]).map(i=>q.o[i]).filter(Boolean);
+    if(!picks.length) return;
+    // 複数選択のスコア合成：既定は平均。agg:'min' は「最も重い症状」を採用
+    const keys=new Set();
+    picks.forEach(o=>o.s&&Object.keys(o.s).forEach(k=>keys.add(k)));
+    keys.forEach(k=>{
+      const v=picks.filter(o=>o.s&&o.s[k]!==undefined).map(o=>o.s[k]);
+      if(!v.length) return;
+      acc[k].push(q.agg==='min' ? Math.min.apply(null,v) : v.reduce((a,b)=>a+b,0)/v.length);
+    });
+    picks.forEach(o=>{
+      if(o.p) for(const k in o.p) pen[k]=(pen[k]||0)+o.p[k];
+      if(o.m) for(const k in o.m){
+        if(Array.isArray(meta[k])) meta[k].push(o.m[k]); else meta[k]=o.m[k];
+      }
+    });
+  });
+  // 減点の上限。複数選択で減点が積み上がりすぎるのを防ぐ
+  for(const k in pen) pen[k]=Math.min(20,pen[k]);
+
+  const S={};
+  for(const k in acc){
+    const a=acc[k];
+    let v = a.length ? a.reduce((x,y)=>x+y,0)/a.length : 50;
+    if(k==='C' && meta.cBonus) v+=meta.cBonus;
+    v -= (pen[k]||0);
+    S[k]=Math.max(8,Math.min(100,Math.round(v)));   // 下限8：バーが消えると壊れて見える
+  }
+
+  // ボトルネックは「最低点」ではなく「最上流」で決める（5ステップは直列＝制約理論）
+  let id='X';
+  if(S.K<45)      id='K';
+  else if(S.P<60) id='P';
+  else if(S.U<60) id='U';
+  else if(S.C<55) id='C';
+  else if(S.F<60) id='F';
+  else if(S.V<50) id='V';
+
+  const pot = Math.round(S.K*0.6 + S.C*0.4);
+  const out = (S.P+S.U+S.F+S.V)/4;
+  /* 発揮率＝土台のうち使えている割合。分母に下限55（初級で100%に張り付くのを防ぐ）、
+     上限95（満点だと「課題なし」に見える） */
+  const eff = Math.max(5,Math.min(95,Math.round(out/Math.max(pot,55)*100)));
+  return {S,id,pot,eff,meta};
+}
+
+/* ============================================================
+   結果描画
+   ここで見せるのは「どこが詰まっているか」と「症状」まで。
+   メカニズム・時間配分・費用・投資レポートはPDF（LINE）側に置く。
+   ============================================================ */
+function finish(){
+  const r=score(), t=T[r.id];
+  el('quiz').style.display='none';
+  el('result').style.display='block';
+
+  el('rName').innerHTML=t.name;
+  el('rSummary').innerHTML=t.sum;
+
+  drawLane('rLane', t.step, r.S);
+  el('rBase').className='pipe__base'+(r.id==='K'?' is-jam':'');
+
+  el('rGapNote').innerHTML =
+      r.id==='X' ? '5つのステップに、大きな詰まりは見当たりません。ここから先の伸びは、教材のレベルと時間の使い方で決まります。'
+    : r.id==='K' ? 'あなたの詰まりは、5つのステップより手前の<b>「知識の土台」</b>にあります。ここを埋めると、上の5ステップが一気に動き出します。<b>いちばん伸びしろが大きい</b>段階です。'
+    : 'オレンジで示したのが、<b>あなたが詰まっている場所</b>です。ここ以外を鍛えても、英会話はなかなか前に進みません。';
+
+  el('rSym').innerHTML=t.sym.map(x=>'<li><span>'+x+'</span></li>').join('');
+  el('rTrainTitle').textContent=t.trainT;
+
+  /* TOEIC高得点で下流が詰まっている人には、その矛盾を名指しする。
+     この層の「スコアはあるのに話せない」という自覚に最も効く一文 */
+  const tc=r.meta.toeic;
+  if((tc==='over'||tc==='800') && (r.id==='F'||r.id==='P'||r.id==='V')){
+    el('rGapNote').innerHTML += '<br><br>TOEICで測られるのは<b>知識の量</b>です。'
+      +'その知識を瞬時に取り出す速さは、測られていません。だからスコアと話せるかどうかは連動しません。';
+  }
+
+  /* ---- LINEゲート：レポート目次をパーソナライズする ---- */
+  const mts=(r.meta.mt||[]).filter(m=>WHY[m]);
+  const names=mts.slice(0,3).map(m=>WHY[m].t).join('・');
+  // 続かなかった理由に直接答える項目を1つ入れる（設問を機能させる）
+  const blocks=r.meta.block||[];
+  const fix = blocks.includes('time')  ? '通勤と昼休みだけで<b>1日3時間を積み上げる</b>時間割'
+            : blocks.includes('alone') ? '一人でも続く記録のつけ方と、<b>続かなくなる前兆</b>'
+            : blocks.includes('doubt') ? '伸びているかを<b>毎週確認する</b>指標の取り方'
+            : blocks.includes('what')  ? '今日から何をやるかが決まる<b>7日間の手順</b>'
+            : '1日3時間を捻出した人の、実際のスケジュール';
+  const list=[
+    '<b>'+t.name+'</b>の詳細解説と、なぜそうなるのかのメカニズム',
+    mts.length ? 'あなたが取り組んだ<b>'+names+'</b>が効かなかった理由' : 'よくある学習法が効かない理由',
+    'あなたの課題に合わせた<b>1日の時間配分</b>（'+t.plan[0][0]+' ほか）',
+    fix,
+    '「英会話の5ステップ」解説eBook'
+  ];
+
+  // 投資レポート：月3,000円以上の層にだけ金額を出す（低予算層に金額を出すと心が閉じる）
+  const fee=r.meta.fee, yrs=r.meta.years;
+  if(fee>=3000 && yrs){
+    /* 保守的に見積もる。盛った数字は信頼を壊すため、
+       ①年数は7年で打ち切り ②継続率0.6を掛ける ③万円単位に丸める */
+    const man=Math.max(1,Math.round(fee*12*Math.min(yrs,7)*0.6/10000));
+    const amt='約'+man.toLocaleString()+'万円';
+    el('rInvLine').innerHTML='あなたはこれまで、英語に <b>'+amt+'</b> を投資してきた計算になります。'
+      +'そのうち、いま特定されたボトルネックに<b>実際に効いていた時間</b>がどれくらいだったか——レポートに入れています。'
+      +'<span class="note" style="display:block;margin-top:10px">※月あたりの支出額と学習年数からの概算です。中断期間を考慮し、保守的に算出しています。</span>';
+    el('rInvLine').classList.remove('hide');
+    list.push('あなたの<b>英語投資レポート</b>（'+amt+' の内訳）');
+  }
+  el('rGateList').innerHTML=list.map(x=>'<li><span>'+x+'</span></li>').join('');
+
+  el('ctaLine').href=CONFIG.LINE_URL;
+  el('ctaCons').href=CONFIG.COUNSELING_URL;
+  if(CONFIG.WEBINAR_URL){ el('ctaWeb').href=CONFIG.WEBINAR_URL; el('ctaWeb').classList.remove('hide'); }
+
+  if(CONFIG.WEBHOOK_URL){
+    try{
+      fetch(CONFIG.WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({at:new Date().toISOString(),type:r.id,scores:r.S,
+          potential:r.pot,efficiency:r.eff,meta:r.meta,answers:ans})});
+    }catch(e){}
+  }
+  if(window.fbq) fbq('trackCustom','DiagnosisComplete',{type:r.id});
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
