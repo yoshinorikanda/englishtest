@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>英語学習法診断 ｜ あなたがいまやるべき英語学習は、どれか</title>
-<meta name="description" content="英会話の5STEPに基づく無料診断。14問・約90秒で、5STEPそれぞれの現在地と、いま最も伸びしろの大きいSTEPが分かります。">
+<meta name="description" content="英会話の5STEPに基づく無料診断。10問・約60秒で、5STEPそれぞれの現在地と、いま最も伸びしろの大きいSTEPが分かります。">
 <meta property="og:title" content="あなたがいまやるべき英語学習は、どれか。">
-<meta property="og:description" content="14問・約90秒。5STEPの現在地と、始める順番が分かります。">
+<meta property="og:description" content="10問・約60秒。5STEPの現在地と、始める順番が分かります。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@ button{font-family:inherit}
 .hidden{display:none!important}
 .tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
 .opt{width:100%;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;border-radius:12px;cursor:pointer;text-align:left;font-size:16px;font-weight:600;transition:all 180ms var(--ease);border:1.5px solid var(--gray-200);background:#fff;color:var(--ink)}
-.opt:hover{border-color:var(--orange)}
+@media(hover:hover) and (pointer:fine){.opt:hover{border-color:var(--orange)}}
 .opt .radio{width:18px;height:18px;border-radius:999px;flex:none;border:1.5px solid var(--gray-300);background:#fff}
 .opt.sel{border-color:var(--orange);background:var(--orange-50);color:var(--orange-700)}
 .opt.sel .radio{border-color:var(--orange);background:var(--orange)}
@@ -72,7 +72,7 @@ button{font-family:inherit}
         <span style="height:1px;flex:1;background:var(--gray-200);display:block"></span>
       </div>
       <h1 style="margin:0 0 20px;font-size:33px;line-height:1.4;font-weight:700;letter-spacing:-0.01em;text-wrap:pretty">あなたがいま<br>やるべき英語学習は、<br>どれか。</h1>
-      <p style="margin:0 0 30px;font-size:15px;line-height:1.9;color:var(--gray-700);text-wrap:pretty">英語を話すとき、脳は5つのSTEPを順に通ります。14問に答えると、5STEPそれぞれの現在地と、<b style="color:var(--ink)">いま最も伸びしろの大きいSTEP</b>、そこから始めるトレーニングが分かります。</p>
+      <p style="margin:0 0 30px;font-size:15px;line-height:1.9;color:var(--gray-700);text-wrap:pretty">英語を話すとき、脳は5つのSTEPを順に通ります。10問に答えると、5STEPそれぞれの現在地と、<b style="color:var(--ink)">いま最も伸びしろの大きいSTEP</b>、そこから始めるトレーニングが分かります。</p>
 
       <div style="margin-bottom:30px">
         <div style="display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;padding:14px 0;border-top:1px solid var(--gray-100)">
@@ -90,7 +90,7 @@ button{font-family:inherit}
       </div>
 
       <button class="btn btn-primary" onclick="startQuiz()">診断をはじめる</button>
-      <div class="note">14問・約90秒 ／ 診断結果は画面ですぐ表示<br>詳細レポート（PDF）はLINE友だち追加でお届け</div>
+      <div class="note">10問・約60秒 ／ 診断結果は画面ですぐ表示<br>詳細レポート（PDF）はLINE友だち追加でお届け</div>
     </div>
 
     <div style="padding:26px 24px 28px;background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)">
@@ -118,7 +118,7 @@ button{font-family:inherit}
   <div id="scr-quiz" class="hidden">
     <div style="padding:20px 24px 40px;min-height:78vh;display:flex;flex-direction:column">
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
-        <div style="font-family:var(--en);font-size:13px;font-weight:700;letter-spacing:0.04em"><span style="color:var(--orange)" id="qNo">01</span><span style="color:var(--gray-300)"> / 14</span></div>
+        <div style="font-family:var(--en);font-size:13px;font-weight:700;letter-spacing:0.04em"><span style="color:var(--orange)" id="qNo">01</span><span style="color:var(--gray-300)"> / <span id="qTot">10</span></span></div>
         <div style="font-size:11px;font-weight:500;color:var(--gray-400)" id="qStep"></div>
       </div>
       <div style="height:3px;background:var(--gray-100);border-radius:999px;overflow:hidden;margin-bottom:32px">
@@ -232,7 +232,7 @@ button{font-family:inherit}
 
   <!-- ============ FOOTER ============ -->
   <div style="padding:24px 24px 40px;background:var(--gray-50);border-top:1px solid var(--gray-100)">
-    <p style="margin:0 0 10px;font-size:10px;line-height:1.8;color:var(--gray-400)">※1 TOEIC®：2024年12月〜2025年4月にTOEIC® L&amp;R TESTコースを卒業した受講生データに基づく平均スコアUP（最大535点）。※2 Versant®：同期間にビジネス英会話コースを卒業した受講生データに基づく平均スコアUP（最大44点）。結果には個人差があり、効果を保証するものではありません。カリキュラム監修：上智大学 吉田研作教授。</p>
+    <p style="margin:0 0 10px;font-size:10px;line-height:1.8;color:var(--gray-400)">※1 TOEIC®：2024年12月〜2025年4月にTOEIC® L&amp;R TESTコースを卒業した受講生データに基づく平均スコアUP（最大535点）。※2 Versant®：同期間にビジネス英会話コースを卒業した受講生データに基づく平均スコアUP（最大44点）。結果には個人差があり、効果を保証するものではありません。カリキュラム監修：上智大学 名誉教授 吉田研作 氏。</p>
     <p style="margin:0 0 16px;font-size:10px;line-height:1.8;color:var(--gray-400)">本診断は第二言語習得論の枠組み（英会話の5STEP）に基づく簡易的な自己診断です。結果には個人差があり、学習成果を保証するものではありません。料金・保証制度の詳細は無料カウンセリングまたは公式サイトにてご確認ください。</p>
     <span class="logo" style="opacity:0.4;font-size:13px">PROGRIT</span>
   </div>
@@ -258,26 +258,22 @@ const STEPS = [
   { no:'05', short:'音声化',   jp:'音声化（声に出す）', en:'ARTICULATION',            desc:'組み立てた英文を、詰まらずに聞き取れる発音で出せている状態です。' }
 ];
 const QUESTIONS = [
-  { s:0, t:'ネイティブ同士の自然な会話は、単語がつながって聞こえて拾いきれない。' },
-  { s:0, t:'知っている単語でも、音声で流れてくると気づけないことがある。' },
-  { s:0, t:'字幕なしの動画は、内容を追い続けるのがむずかしい。' },
-  { s:1, t:'聞き取れても、意味を考えているうちに話が次へ進んでしまう。' },
-  { s:1, t:'英文を読むとき、前に戻って読み直さないと意味が取れない。' },
-  { s:1, t:'一文が長くなると、主語と述語の対応を見失う。' },
-  { s:2, t:'意見を求められると、何を話すか決めるまでに時間がかかる。' },
-  { s:2, t:'日本語でも、とっさに話す内容の順番をまとめるのが苦手だ。' },
-  { s:2, t:'言いたいことはあるのに、どこから話すか迷って黙ってしまう。' },
-  { s:3, t:'日本語で文を考えてから、英語に訳して話している。' },
-  { s:3, t:'時制・冠詞・語順を、話しながら迷うことが多い。' },
-  { s:3, t:'使える表現の型が少なく、同じ言い回しばかりになる。' },
-  { s:4, t:'発音に自信がなく、聞き返されることがある。' },
-  { s:4, t:'口が回らず、言い直しや言いよどみが多くなる。' }
+  { s:0, t:'文章を見れば聞き取れるのに、音声だけになると同じ内容でも聞き取れないことがある。' },
+  { s:0, t:'単語は知っているのに、速く話されて音がつながると聞き取れない。' },
+  { s:1, t:'英文を、後ろまで読んでから前に戻って意味を取り直すことが多い。' },
+  { s:1, t:'長めの文や音声だと、一文が終わる前に前半の内容を忘れてしまう。' },
+  { s:2, t:'意見を求められると、日本語でも何をどの順で話すか決めるのに時間がかかる。' },
+  { s:2, t:'込み入った話を英語でするとき、話す順番を組み立てるのに時間がかかる。' },
+  { s:3, t:'日本語で文を組み立ててから、英語に訳して話している。' },
+  { s:3, t:'話しながら文法（時制やsなど）が気になり、スピードが落ちる。' },
+  { s:4, t:'知っている単語でも、口に出すとスムーズに出てこず言いよどむことがある。' },
+  { s:4, t:'言えたつもりでも、相手に「もう一度」と聞き返されることがある。' }
 ];
 const OPTS = [
   { label:'よくある', v:3 },
-  { label:'ときどきある', v:2 },
+  { label:'たまにある', v:2 },
   { label:'あまりない', v:1 },
-  { label:'ほとんどない', v:0 }
+  { label:'ほぼない', v:0 }
 ];
 
 // ================= STATE =================
@@ -316,6 +312,7 @@ function goBack(){ if (qi === 0) { show('scr-lp'); } else { qi--; renderQ(); } }
 function renderQ(){
   const q = QUESTIONS[qi];
   el('qNo').textContent = String(qi+1).padStart(2,'0');
+  el('qTot').textContent = QUESTIONS.length;
   el('qStep').textContent = STEPS[q.s].no + ' ' + STEPS[q.s].short;
   el('qBar').style.width = Math.round(((qi+1)/QUESTIONS.length)*100) + '%';
   el('qText').textContent = q.t;
@@ -327,6 +324,7 @@ function renderQ(){
 function pick(v){
   answers[qi] = v;
   renderQ();
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   setTimeout(() => {
     if (qi >= QUESTIONS.length - 1) finish();
     else { qi++; renderQ(); }
