@@ -93,14 +93,6 @@ button{font-family:inherit}
       <div class="note">10問・約60秒 ／ 診断結果はこの画面ですぐに表示<br>5STEPの現在地・学習法まで、その場でわかります</div>
     </div>
 
-    <div style="padding:26px 24px 28px;background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)">
-      <div class="stats">
-        <div><div class="stat-num" id="statCustomers">25,000</div><div class="stat-label">累計受講者数</div></div>
-        <div><div class="stat-num" style="color:var(--orange)" id="statToeic">+101</div><div class="stat-label">TOEIC®平均<br>スコアUP（※1）</div></div>
-        <div><div class="stat-num">3<span style="font-size:15px;font-weight:700">ヶ月</span></div><div class="stat-label">で成果を出す設計</div></div>
-      </div>
-    </div>
-
     <div style="padding:42px 24px 40px">
       <div class="eyebrow" style="margin-bottom:14px">THE 5 STEPS</div>
       <h2 class="section-h2">英語を話すとき、脳は5つのSTEPを順に通ります。</h2>
@@ -309,7 +301,6 @@ let answers = new Array(QUESTIONS.length).fill(null);
 const el = id => document.getElementById(id);
 
 // ================= INIT =================
-el('statCustomers').textContent = CONFIG.CUSTOMERS;
 el('ctaCounseling').href = CONFIG.COUNSELING_URL;
 if (CONFIG.WEBINAR_URL) { el('ctaWebinar').href = CONFIG.WEBINAR_URL; el('ctaWebinar').classList.remove('hidden'); }
 el('stepList').innerHTML = STEPS.map(s => `
