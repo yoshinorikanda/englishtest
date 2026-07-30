@@ -90,7 +90,7 @@ button{font-family:inherit}
       </div>
 
       <button class="btn btn-primary" onclick="startQuiz()">診断をはじめる</button>
-      <div class="note">10問・約60秒 ／ 診断結果は画面ですぐ表示<br>詳細レポート（PDF）はLINE友だち追加でお届け</div>
+      <div class="note">10問・約60秒 ／ 診断結果はこの画面ですぐに表示<br>5STEPの現在地・学習法まで、その場でわかります</div>
     </div>
 
     <div style="padding:26px 24px 28px;background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100)">
@@ -154,20 +154,20 @@ button{font-family:inherit}
         <div style="font-size:11px;color:var(--gray-400)">100点満点・自己申告ベース</div>
       </div>
       <div id="rBars" style="display:grid;gap:15px"></div>
-      <div style="text-align:center;font-size:12px;font-weight:600;color:var(--gray-400);margin-top:16px">スコアの数値は、詳細レポートで公開します</div>
+      <div style="text-align:center;font-size:12px;color:var(--gray-400);margin-top:16px;line-height:1.7">自己申告の回答にもとづく推定スコアです。0点は出さず、<br>低い値は「伸びしろ」を表します。</div>
     </div>
 
-    <div style="background:var(--ink);color:#fff;padding:34px 24px 32px">
-      <div class="eyebrow" style="margin-bottom:14px">FULL REPORT</div>
-      <h2 class="section-h2" style="color:#fff">続きは、あなた専用のPDFで。</h2>
-      <p style="margin:0 0 20px;font-size:14px;line-height:1.9;color:var(--gray-300);text-wrap:pretty">英会話の5STEPの仕組みと、あなたが最優先で鍛えるSTEPの学習法。LINEの友だち追加で、この診断結果に対応したレポートをお届けします。</p>
-      <div style="display:grid;gap:10px;margin-bottom:22px">
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray-200)"><span class="dot" style="flex:none"></span>英会話の5STEPの仕組み解説</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray-200)"><span class="dot" style="flex:none"></span>あなたの最優先STEPに合わせた学習法</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray-200)"><span class="dot" style="flex:none"></span>無料ウェビナー・個別カウンセリングのご案内</div>
-      </div>
-      <a id="ctaLine" class="btn btn-line" href="#">LINEでレポートを受け取る</a>
-      <div class="note">友だち追加後すぐに届きます ／ 無料</div>
+    <div style="padding:6px 24px 6px">
+      <div class="eyebrow" style="margin-bottom:12px">この結果の読み方</div>
+      <p id="rReading" style="margin:0 0 14px;font-size:14px;line-height:1.95;color:var(--gray-700);text-wrap:pretty"></p>
+      <p style="margin:0;font-size:14px;line-height:1.95;color:var(--gray-700);text-wrap:pretty">5つのSTEPは連鎖しています。<b style="color:var(--ink)">大事なのは「何をやるか」より「どの順番でやるか」。</b>最優先のSTEPを整えると、連動して下流のSTEPも伸びていきます。</p>
+    </div>
+
+    <div style="padding:28px 24px 34px">
+      <div class="eyebrow" style="margin-bottom:12px">FIRST TRAINING</div>
+      <h2 id="rTrainTitle" class="section-h2" style="margin-bottom:8px"></h2>
+      <p style="margin:0 0 18px;font-size:13px;line-height:1.85;color:var(--gray-500);text-wrap:pretty">今日から始められる、あなたの最優先STEPのトレーニングです。</p>
+      <div id="rTraining" style="display:grid;gap:12px"></div>
     </div>
 
     <div style="padding:36px 24px 34px;border-bottom:1px solid var(--gray-100)">
@@ -223,8 +223,8 @@ button{font-family:inherit}
         <p class="faq-a">いいえ。オンライン英会話は「試合」にあたります。必要ですが、試合だけでは各STEPは伸びません。シャドーイングや口頭英作文といった「練習」と組み合わせるのが効果的です。</p>
       </div>
       <div style="border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100);padding:16px 0">
-        <div class="faq-q">結果はもう一度受け取れますか。</div>
-        <p class="faq-a">LINEの友だち追加をいただいた方には、診断結果に対応した詳細レポート（PDF）をお送りします。受け取り後もトーク画面からご確認いただけます。</p>
+        <div class="faq-q">結果はいつ見られますか。</div>
+        <p class="faq-a">10問に答えると、この画面ですぐに5STEPの現在地と、最優先で鍛えるSTEP、その学習法までが表示されます。もう一度診断し直すこともできます。</p>
       </div>
       <button onclick="restart()" style="width:100%;min-height:48px;margin-top:20px;border:none;background:none;font-size:13px;font-weight:600;color:var(--gray-400);cursor:pointer">もう一度診断する</button>
     </div>
@@ -275,6 +275,33 @@ const OPTS = [
   { label:'あまりない', v:1 },
   { label:'ほぼない', v:0 }
 ];
+// 最優先STEP別の「読み方」と「ファーストトレーニング」（結果画面に表示）
+const DETAIL = [
+  { read:'STEP01「音声知覚」が最優先ということは、意味を考える前の“音を拾う”段階でつまずいている可能性が高い状態です。入口で音が欠けると、その先の意味理解から発話まで、負荷が波のように伝わります。',
+    train:[
+      { t:'シャドーイング（音マネ）', d:'0.75倍速で、聞こえた音をそのまま声に出して追いかける。意味ではなく「音」に集中します。', today:'1本5分／同じ3文だけを繰り返す' },
+      { t:'ディクテーション（書き取り）', d:'短い音声を止めて、聞こえたとおりに書き出す。拾えていない音を「見える化」します。', today:'3文だけ書いて、答えと照らす' }
+    ] },
+  { read:'STEP02「意味理解」が最優先ということは、音は拾えていても、意味の処理が追いついていない状態です。返り読みや翻訳を挟まず、前から意味をとる力が鍵になります。',
+    train:[
+      { t:'精読 → 音読 → 速読', d:'構文を取り切った英文を、前から意味処理する練習。戻り読みをやめ、語順のまま理解します。', today:'短い1段落を精読→音読で3回' },
+      { t:'チャンクリーディング', d:'意味のかたまりごとに区切り、そこで理解を確定してから先へ進みます。', today:'1記事に区切りを入れて読む' }
+    ] },
+  { read:'STEP03「概念化」が最優先ということは、英語以前に「話す中身と順番」をまとめる段階でつまずいている状態です。まずは日本語で、結論→理由→例の順に整理する力を鍛えます。',
+    train:[
+      { t:'日本語で要点整理（結論→理由→例）', d:'話す前に、結論・理由・具体例の順で組み立てる癖をつけます。', today:'身近な話題1つで練習する' },
+      { t:'口頭英作文', d:'整理した要点を、そのまま英語で声に出す。中身と英語を分けて鍛えます。', today:'3文だけ声に出す' }
+    ] },
+  { read:'STEP04「文章化」が最優先ということは、言いたい中身は浮かぶのに、英文に組み立てる運用が追いついていない状態です。語彙・文法を「考えず反射で出せる」状態に近づけます。',
+    train:[
+      { t:'瞬間英作文', d:'簡単な日本語文を、考えずに英語で言い切る反復。文型を体に入れます。', today:'中学レベルの文型で10文' },
+      { t:'型のストック', d:'よく使う言い回しを「型」として覚え、当てはめて話します。', today:'使いたい型を3つ書き出す' }
+    ] },
+  { read:'STEP05「音声化」は最も下流のSTEPです。発話の詰まりや発音は、上流のSTEPが整うと連動して改善することが多いため、まずは上流のSTEPから着手します。',
+    train:[
+      { t:'音読・発音矯正', d:'正しい音とリズムで声に出す練習を重ねます。', today:'1文を録音して聴き比べる' }
+    ] }
+];
 
 // ================= STATE =================
 let qi = 0;
@@ -283,7 +310,6 @@ const el = id => document.getElementById(id);
 
 // ================= INIT =================
 el('statCustomers').textContent = CONFIG.CUSTOMERS;
-el('ctaLine').href = CONFIG.LINE_URL;
 el('ctaCounseling').href = CONFIG.COUNSELING_URL;
 if (CONFIG.WEBINAR_URL) { el('ctaWebinar').href = CONFIG.WEBINAR_URL; el('ctaWebinar').classList.remove('hidden'); }
 el('stepList').innerHTML = STEPS.map(s => `
@@ -345,10 +371,13 @@ function scores(){
 // ================= RESULT =================
 function finish(){
   const sc = scores();
-  const origin = sc.indexOf(Math.min.apply(null, sc));
+  // 最優先はSTEP01〜04（index 0〜3）から選ぶ。音声化(05)は最優先にせず、常に「連動」扱い。
+  // 同点は上流（番号の小さいSTEP）を優先。
+  let origin = 0;
+  for (let i = 1; i <= 3; i++){ if (sc[i] < sc[origin]) origin = i; }
   el('rNo').textContent = STEPS[origin].no;
   el('rName').textContent = STEPS[origin].jp;
-  el('rLead').textContent = 'いまの回答からは、5STEPのうち「' + STEPS[origin].jp + '」の負荷がいちばん高いと推定されます。ここが、いま最優先で鍛えるべき、伸びしろの最も大きいSTEPです。';
+  el('rLead').textContent = 'いまの回答からは、5STEPのうち「' + STEPS[origin].short + '」が、あなたがいま最優先で鍛えるべき、伸びしろの最も大きいSTEPと推定されます。';
   el('rBars').innerHTML = STEPS.map((s,i) => {
     const isOrigin = i === origin, isDown = i > origin;
     const fill = isOrigin ? 'var(--orange)' : (isDown ? 'var(--orange-200)' : 'var(--gray-300)');
@@ -362,13 +391,24 @@ function finish(){
           <span style="font-family:var(--en);font-size:11px;font-weight:700;color:#C4C4C4">${s.no}</span>
           <span style="font-size:14px;font-weight:700;color:${labelColor}">${s.short}</span>${tag}
         </div>
-        <span data-count="${sc[i]}" style="font-family:var(--en);font-size:18px;font-weight:800;letter-spacing:-0.02em;color:${labelColor};filter:blur(5px);opacity:0.7">0</span>
+        <span data-count="${sc[i]}" style="font-family:var(--en);font-size:18px;font-weight:800;letter-spacing:-0.02em;color:${labelColor}">0</span>
       </div>
-      <div style="height:8px;background:var(--gray-75);border-radius:999px;overflow:hidden;filter:blur(4px);opacity:0.75">
+      <div style="height:8px;background:var(--gray-75);border-radius:999px;overflow:hidden">
         <div data-bar="${sc[i]}" style="height:100%;border-radius:999px;background:${fill};width:0%;transition:width 900ms var(--ease)"></div>
       </div>
     </div>`;
   }).join('');
+  // この結果の読み方 ＋ ファーストトレーニング
+  const d = DETAIL[origin];
+  el('rReading').textContent = d.read;
+  el('rTrainTitle').textContent = STEPS[origin].short + 'から始める、あなたの学習法';
+  el('rTraining').innerHTML = d.train.map((t,idx) => `
+    <div style="border:1px solid var(--gray-200);border-radius:12px;padding:16px 18px">
+      <div style="font-family:var(--en);font-size:11px;font-weight:700;letter-spacing:0.08em;color:var(--orange);margin-bottom:6px">TRAINING 0${idx+1}</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:7px">${t.t}</div>
+      <div style="font-size:13px;line-height:1.85;color:var(--gray-500);text-wrap:pretty">${t.d}</div>
+      <div style="margin-top:10px;font-size:12px;font-weight:700;color:var(--orange-700);background:var(--orange-50);border-radius:7px;padding:8px 11px;line-height:1.6">今日やること：${t.today}</div>
+    </div>`).join('');
   show('scr-result');
   // count-up + bar animation
   requestAnimationFrame(() => {
